@@ -55,7 +55,7 @@ def game_redrawAll(app):
             drawImage(CMUImage(img), x, y)
 
 def game_onStep(app):
-    app.stepsPerSecond = 10
+    app.stepsPerSecond = 20
     if app.stepCount < 30:
         app.stepCount += 1
     else:
@@ -65,16 +65,16 @@ def game_onStep(app):
         #keep nextObstacles & nextCoins lists updated
         n = 4 - min(len(app.player1Obstacles), len(app.player2Obstacles)) #obstacles needed
         #to be generated to keep obstacles list at 4
-        for i in range(n):
+        for i in range(n+3):
             newObstacle = OBS.loadObstacle()
             if True:#OBS.isLegalObstacle():
                 app.nextObstacles.append(newObstacle)
         
 
         n = 3 - min(len(app.player1Coins), len(app.player2Coins))
-        for i in range(n):
+        for i in range(n+3):
             newCoin = CO.loadCoin()
-            if CO.isLegalCoin(newCoin, app.player1Coins + app.player2Coins):
+            if CO.isLegalCoin(newCoin, app.player1Coins + app.player2Coins + app.nextCoins):
                 app.nextCoins.append(newCoin)
 
         #add new obstacles and coins to players view
@@ -106,6 +106,7 @@ def game_onStep(app):
         
         for i in range(len(app.player2Obstacles)):
             app.player2Obstacles[i].updateLocation(app.player2.speed)
+            
         for i in range(len(app.player2Coins)):
             app.player2Coins[i].updateLocation(app.player2.speed)
         #remove sprites that are off the map
@@ -147,15 +148,22 @@ def game_onStep(app):
             app.gameOver == True
             app.winner = "Player 1"
         
+        #update player distance
+        app.player1.distance += app.player1.speed
+        app.player2.distance += app.player2.speed
         #if players collide with each other
 
         #if game over
 def game_onKeyPress(app, key):
     if not app.gameOver and not app.isPaused:
         if key == "left" and not app.player1.isJump:
+            print(app.player1.track)
             app.player1.switchLanes(-1)
+            print(app.player1.track)
         elif key == "right" and not app.player1.isJump:
+            print(app.player1.track)
             app.player1.switchLanes(+1)
+            print(app.player1.track)
         elif key == "up":
             app.player1.isJump = True
         
@@ -165,14 +173,16 @@ def game_onKeyPress(app, key):
             app.player2.switchLanes(+1)
         elif key == "w":
             app.player2.isJump = True
-        if key == "space":
-            print("player 1 coins", app.player1Coins, "player2 coins", app.player2Coins)
-            for coin in app.player1Coins:
-                print(coin.count)
 
     if not app.gameOver:
         if key == "p":
             app.isPaused = not app.isPaused
+        if key == "space":
+            print("player1 has traveled", app.player1.distance, "pixels")
+            print("player2 has traveled", app.player2.distance, "pixels")
+            print(app.player1Obstacles)
+            print(app.player2Obstacles)
+
 
 def main():
     runAppWithScreens(initialScreen = "game")

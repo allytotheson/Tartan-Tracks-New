@@ -23,10 +23,16 @@ class Coin:
     def updateLocation(self, speed):
         x, y = self.location
         self.location = (x-speed, y)
+    
+    def updateCollectedCoin(self):
+        self.count -= 1
+        self.width = self.width = COIN_WIDTH * self.count
+        x, y = self.location
+        self.location = (x+COIN_WIDTH, TRACK_1_BOTTOM + self.trackDy - self.height - 15)
 
 def isLegalCoin(newCoin, coinList):
     for curCoin in coinList:
-        if (newCoin.location[0] - curCoin.location[0] + curCoin.width <= 0 and
+        if (newCoin.location[0] <= (curCoin.location[0] + curCoin.width) and
             newCoin.track == curCoin.track):
             return False
         if newCoin.count == curCoin.count:

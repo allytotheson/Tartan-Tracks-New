@@ -20,6 +20,7 @@ class Player:
         self.distance = 0
         self.isJump = False
         self.jumpCount = 6
+        
 
     def __repr__(self):
         return f"Player {self.name}"
@@ -39,8 +40,10 @@ class Player:
     def switchLanes(self, direction):
         if 0<= self.track + direction <= 2:
             self.track+=direction
+            self.trackDy = TRACK_DIFFERENCE*self.track
             self.location = (BOARD_WIDTH//6, TRACK_1_MIDDLE + self.trackDy - PERSON_HEIGHT) 
         #animation for bouncing back
+
     def jump(self):
         if self.jumpCount >= -6:
             y = self.location[1]

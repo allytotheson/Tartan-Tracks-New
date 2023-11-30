@@ -23,6 +23,7 @@ class Obstacle:
     def updateLocation(self, speed):
         x, y = self.location
         self.location = (x-speed, y)
+        return self.location
 
 class Train(Obstacle):
     def __init__(self, track, color):

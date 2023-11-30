@@ -16,7 +16,7 @@ def start(app):
     app.bg = BACKGROUND
     app.coin = COIN
 
-    app.players = [Player("bluePlayer", 0, 5, 0), Player("redPlayer", 1, 5, 1)]
+    app.players = [Player("bluePlayer", 0, 10, 0), Player("redPlayer", 1, 5, 1)]
     app.player1 = app.players[0]
     app.player2 = app.players[1]
 
@@ -58,25 +58,22 @@ def removeCollectedCoins(coin, player1CoinsList, player2CoinsList, nextCoins):
     for i in range(len(player1CoinsList)):
         tempCoin = player1CoinsList[i]
         if tempCoin == coin:
-            tempCoin.count -= 1
-            x, y = tempCoin.location 
-            tempCoin.location = (x+COIN_WIDTH, y)
+            tempCoin.updateCollectedCoin()
+            # tempCoin.count -= 1
+            # x, y = tempCoin.location 
+            # tempCoin.location = (x+COIN_WIDTH, y)
             player1CoinsList[i] = tempCoin
     
     for i in range(len(player2CoinsList)):
         tempCoin = player2CoinsList[i]
         if tempCoin == coin:
-            tempCoin.count -= 1
-            x, y = tempCoin.location 
-            tempCoin.location = (x+COIN_WIDTH, y)
+            tempCoin.updateCollectedCoin()
             player2CoinsList[i] = tempCoin
 
     for i in range(len(nextCoins)):
         tempCoin = nextCoins[i]
         if tempCoin == coin:
-            tempCoin.count -= 1
-            x, y = tempCoin.location 
-            tempCoin.location = (x+COIN_WIDTH, y)
+            tempCoin.updateCollectedCoin()
             nextCoins[i] = tempCoin
     
     return player1CoinsList, player2CoinsList, nextCoins
