@@ -44,13 +44,21 @@ class Fence(Obstacle):
         self.location = (BOARD_WIDTH, TRACK_1_BOTTOM + self.trackDy - self.height)
         self.name = f"images/{self.fill}Fence.png"
         self.count = 1
+class Person(Obstacle):
+    def __init__(self, track, name):
+        super().__init__(track)
+        self.width = PERSON_WIDTH
+        self.height = PERSON_HEIGHT
+        self.name = f"images/{name}.png"
 
-def isLegalObstacle():
-    #if all obstacles in current list can make it to the edge of the board and player has a track
-    #to go to, it's legal
-    pass
+def isLegalObstacle(newObstacle, allObstacles):
+    for obstacle in allObstacles:
+        if (newObstacle.location[0] <= (obstacle.location[0] + obstacle.width) and
+            newObstacle.track == obstacle.track):
+            return False
+    return True
 
-def loadObstacle():
+def loadObstacle(allObstacles):
     randomType = choice(OBSTACLES)
     randomTrack = randrange(0,3)
     randomCustomization = choice(CUSTOMIZATION[randomType])
@@ -60,7 +68,10 @@ def loadObstacle():
     elif randomType == "Fence":
         newObstacle = Fence(randomTrack, randomCustomization)
         
-    return newObstacle
+    if isLegalObstacle(newObstacle, allObstacles):
+        return newObstacle
+    else:
+        return loadObstacle(allObstacles)
 
 
 

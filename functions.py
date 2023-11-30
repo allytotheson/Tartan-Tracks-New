@@ -2,6 +2,7 @@ from cmu_graphics import *
 from PIL import Image, ImageDraw
 from constants import * 
 import random 
+from copy import deepcopy
 
 from Obstacle import Obstacle, Train, Fence
 from Player import Player
@@ -16,7 +17,7 @@ def start(app):
     app.bg = BACKGROUND
     app.coin = COIN
 
-    app.players = [Player("bluePlayer", 0, 10, 0), Player("redPlayer", 1, 5, 1)]
+    app.players = [Player("bluePlayer", 0, 10.5, 0), Player("redPlayer", 1, 10, 1)]
     app.player1 = app.players[0]
     app.player2 = app.players[1]
 
@@ -54,29 +55,20 @@ def removeOffScreen(spritesList):
     
     return spritesList
 
-def removeCollectedCoins(coin, player1CoinsList, player2CoinsList, nextCoins):
+def removeCollectedCoins(coin, player1CoinsList, player2CoinsList):
     for i in range(len(player1CoinsList)):
-        tempCoin = player1CoinsList[i]
+        tempCoin = deepcopy(player1CoinsList[i])
         if tempCoin == coin:
             tempCoin.updateCollectedCoin()
-            # tempCoin.count -= 1
-            # x, y = tempCoin.location 
-            # tempCoin.location = (x+COIN_WIDTH, y)
             player1CoinsList[i] = tempCoin
     
     for i in range(len(player2CoinsList)):
-        tempCoin = player2CoinsList[i]
+        tempCoin = deepcopy(player2CoinsList[i])
         if tempCoin == coin:
             tempCoin.updateCollectedCoin()
             player2CoinsList[i] = tempCoin
-
-    for i in range(len(nextCoins)):
-        tempCoin = nextCoins[i]
-        if tempCoin == coin:
-            tempCoin.updateCollectedCoin()
-            nextCoins[i] = tempCoin
     
-    return player1CoinsList, player2CoinsList, nextCoins
+    return player1CoinsList, player2CoinsList
     
 
 def drawSpritesInOrder(spritesList): #sorts obstacles into smaller lists
@@ -103,3 +95,40 @@ def loadImage(sprite):
     if isinstance(sprite, Player):
         player = Image.open(sprite.name)
         return player
+
+
+def addSpritesToList(player1, player2, player1List, player2List, newSprite):
+    if player1.distance > player2.distance:
+        player1List.append(deepcopy(newSprite)) #player 1
+
+        #player 2
+        distanceDx = player1.distance - player2.distance
+        sprite = deepcopy(newSprite) 
+        x, y = sprite.location
+        sprite.location = x+distanceDx, y
+        player2List.append(sprite)
+    elif player2.distance > player1.distance:
+        player2List.append(deepcopy(newSprite)) #player 2
+
+        #player 1
+        distanceDx = player2.distance - player1.distance
+        sprite = deepcopy(newSprite) 
+        x, y = sprite.location
+        sprite.location = x+distanceDx, y
+        player1List.append(sprite)
+    else:
+        player1List.append(deepcopy(newSprite))
+        player2List.append(deepcopy(newSprite))
+    
+
+    return player1List, player2List
+
+
+def drawPlayers(app, player1, player2):
+    x, y = player1.location
+    img = loadImage(player1)
+    drawImage(CMUImage(img), x, y)
+    x, y = player2.location[0], player2.location[1] + BACKGROUND_HEIGHT
+    img = loadImage(player2)
+    drawImage(CMUImage(img), x, y)
+

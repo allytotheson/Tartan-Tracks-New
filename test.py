@@ -1,7 +1,7 @@
-from PIL import Image, ImageDraw
-COIN = Image.open("images/coin.png")
-COIN_WIDTH = COIN.size[0]
-COIN_HEIGHT = COIN.size[1]
+from Coin import Coin
+coin1 = Coin(1, 3)
 
+coin2 = Coin(1, 3)
 
-print(COIN_WIDTH)
+coin1.location = (200, 300)
+print(coin1 == coin2)

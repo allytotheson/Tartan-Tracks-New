@@ -26,7 +26,7 @@ class Coin:
     
     def updateCollectedCoin(self):
         self.count -= 1
-        self.width = self.width = COIN_WIDTH * self.count
+        self.width = COIN_WIDTH * self.count
         x, y = self.location
         self.location = (x+COIN_WIDTH, TRACK_1_BOTTOM + self.trackDy - self.height - 15)
 
@@ -42,9 +42,12 @@ def isLegalCoin(newCoin, coinList):
     #coins should be different lengths
     #
 
-def loadCoin():
+def loadCoin(coinList):
     randomTrack = random.randrange(0,3)
     randomCount = random.randrange(3,6)
     newCoinString = Coin(randomTrack, randomCount)
 
-    return newCoinString
+    if isLegalCoin(newCoinString, coinList):
+        return newCoinString
+    else:
+        return loadCoin(coinList)

@@ -2,6 +2,7 @@ from cmu_graphics import *
 from PIL import Image, ImageDraw
 from constants import * 
 import random 
+from copy import deepcopy
 
 from Obstacle import Obstacle, Train, Fence
 from Player import Player
@@ -48,57 +49,37 @@ def game_redrawAll(app):
                 drawImage(CMUImage(img), x, y)
 
     #draw players
-    for player in app.players:
-        for screen in range(2):
-            x, y = player.location[0], player.location[1] + screen*BACKGROUND_HEIGHT
-            img = func.loadImage(player)
-            drawImage(CMUImage(img), x, y)
+    
+    # for player in app.players:
+    #     for screen in range(2):
+    #         x, y = player.location[0], player.location[1] + screen*BACKGROUND_HEIGHT
+    #         img = func.loadImage(player)
+    #         drawImage(CMUImage(img), x, y)
+    func.drawPlayers(app, app.player1, app.player2)
 
 def game_onStep(app):
     app.stepsPerSecond = 20
-    if app.stepCount < 30:
-        app.stepCount += 1
-    else:
-        app.stepCount = 0
+    app.stepCount += 1
     
     if not app.gameOver and not app.isPaused:
-        #keep nextObstacles & nextCoins lists updated
-        n = 4 - min(len(app.player1Obstacles), len(app.player2Obstacles)) #obstacles needed
-        #to be generated to keep obstacles list at 4
-        for i in range(n+3):
-            newObstacle = OBS.loadObstacle()
-            if True:#OBS.isLegalObstacle():
-                app.nextObstacles.append(newObstacle)
-        
-
-        n = 3 - min(len(app.player1Coins), len(app.player2Coins))
-        for i in range(n+3):
-            newCoin = CO.loadCoin()
-            if CO.isLegalCoin(newCoin, app.player1Coins + app.player2Coins + app.nextCoins):
-                app.nextCoins.append(newCoin)
-
         #add new obstacles and coins to players view
         #PLAYER 1
-        if app.stepCount % OBSTACLE_GENERATION_SPEED[app.player1.speed] == 0 :
-            #obstacles
-            if len(app.player1Obstacles) < 3:
-                app.player1Obstacles.append(app.nextObstacles[0]) 
-            #coins
-            if len(app.player1Coins) < 3:
-                app.player1Coins.append(app.nextCoins[0])
-        #PLAYER 2
-        if app.stepCount % OBSTACLE_GENERATION_SPEED[app.player2.speed] == 0:
-            if len(app.player2Obstacles) < 3:
-                app.player2Obstacles.append(app.nextObstacles[0])  
-            if len(app.player2Coins) < 3:
-                app.player2Coins.append(app.nextCoins[0])
+        if min(len(app.player1Obstacles), len(app.player2Obstacles)) < 3:
+            obstaclesLists = func.addSpritesToList(app.player1, app.player2,
+                                                     app.player1Obstacles, app.player2Obstacles,
+                                                     OBS.loadObstacle(app.player1Obstacles +
+                                                                      app.player2Obstacles))
+            app.player1Obstacles = obstaclesLists[0]
+            app.player2Obstacles = obstaclesLists[1]
 
-        #remove obstacles on nextObstacles and coins on nextCoins that have
-        #appeared on both screens
-        app.nextObstacles = func.removeNext(app.nextObstacles, app.player1Obstacles,
-                                            app.player2Obstacles)
-        app.nextCoins = func.removeNext(app.nextCoins, app.player1Coins, app.player2Coins)
-        #update sprite locations for player 1 and player 2
+        if min(len(app.player1Coins), len(app.player2Coins)) < 1:
+            coinsLists = func.addSpritesToList(app.player1, app.player2, 
+                                                     app.player1Coins, app.player2Coins,
+                                                     CO.loadCoin(app.player1Coins+
+                                                                 app.player2Coins))
+            app.player1Coins = coinsLists[0]
+            app.player2Coins = coinsLists[1]
+
         for i in range(len(app.player1Obstacles)):
             app.player1Obstacles[i].updateLocation(app.player1.speed)
         for i in range(len(app.player1Coins)):
@@ -109,6 +90,7 @@ def game_onStep(app):
             
         for i in range(len(app.player2Coins)):
             app.player2Coins[i].updateLocation(app.player2.speed)
+
         #remove sprites that are off the map
         app.player1Obstacles = func.removeOffScreen(app.player1Obstacles)
         app.player2Obstacles = func.removeOffScreen(app.player2Obstacles)
@@ -126,20 +108,16 @@ def game_onStep(app):
         if app.player1.isCoinCollision(app.player1Coins)[0] == "True": #(True, coin)
             coin = app.player1.isCoinCollision(app.player1Coins)[1]
             lists = func.removeCollectedCoins(coin, app.player1Coins,
-                                              app.player2Coins,
-                                              app.nextCoins)
+                                              app.player2Coins)
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
-            app.nextCoins = lists[2]
         #if player 2 collides with coin
         if app.player2.isCoinCollision(app.player2Coins)[0] == "True":
             coin = app.player2.isCoinCollision(app.player2Coins)[1]
             lists = func.removeCollectedCoins(coin, app.player1Coins,
-                                              app.player2Coins,
-                                              app.nextCoins)
+                                              app.player2Coins)
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
-            app.nextCoins = lists[2]
         #if players collide with obstacle
         if app.player1.isObstacleCollision(app.player1Obstacles):
             app.gameOver == True
@@ -157,13 +135,9 @@ def game_onStep(app):
 def game_onKeyPress(app, key):
     if not app.gameOver and not app.isPaused:
         if key == "left" and not app.player1.isJump:
-            print(app.player1.track)
             app.player1.switchLanes(-1)
-            print(app.player1.track)
         elif key == "right" and not app.player1.isJump:
-            print(app.player1.track)
             app.player1.switchLanes(+1)
-            print(app.player1.track)
         elif key == "up":
             app.player1.isJump = True
         
@@ -181,7 +155,7 @@ def game_onKeyPress(app, key):
             print("player1 has traveled", app.player1.distance, "pixels")
             print("player2 has traveled", app.player2.distance, "pixels")
             print(app.player1Obstacles)
-            print(app.player2Obstacles)
+            print(app.player1Coins)
 
 
 def main():
