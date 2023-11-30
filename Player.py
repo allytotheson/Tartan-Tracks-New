@@ -65,7 +65,6 @@ class Player:
             if ((coin.location[0] - (self.location[0] + self.width)) <= 0
                 and coin.location[0] + COIN_WIDTH >= self.location[0]
                 and coin.track == self.track):
-
                 self.addCoins()
                 return "True", coin
         return "False"

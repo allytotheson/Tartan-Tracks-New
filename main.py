@@ -73,9 +73,9 @@ def game_onStep(app):
 
         n = 3 - min(len(app.player1Coins), len(app.player2Coins))
         for i in range(n):
-            newCoinString = CO.loadCoin()
-            if True: #CO.isLegalCoin():
-                app.nextCoins.append(newCoinString)
+            newCoin = CO.loadCoin()
+            if CO.isLegalCoin(newCoin, app.player1Coins + app.player2Coins):
+                app.nextCoins.append(newCoin)
 
         #add new obstacles and coins to players view
         #PLAYER 1
@@ -139,7 +139,6 @@ def game_onStep(app):
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
             app.nextCoins = lists[2]
-        
         #if players collide with obstacle
         if app.player1.isObstacleCollision(app.player1Obstacles):
             app.gameOver == True
@@ -166,7 +165,10 @@ def game_onKeyPress(app, key):
             app.player2.switchLanes(+1)
         elif key == "w":
             app.player2.isJump = True
-
+        if key == "space":
+            print("player 1 coins", app.player1Coins, "player2 coins", app.player2Coins)
+            for coin in app.player1Coins:
+                print(coin.count)
 
     if not app.gameOver:
         if key == "p":

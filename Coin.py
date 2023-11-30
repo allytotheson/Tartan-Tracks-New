@@ -26,7 +26,8 @@ class Coin:
 
 def isLegalCoin(newCoin, coinList):
     for curCoin in coinList:
-        if newCoin.location[0] - curCoin.location[0] + curCoin.width <= 0:
+        if (newCoin.location[0] - curCoin.location[0] + curCoin.width <= 0 and
+            newCoin.track == curCoin.track):
             return False
         if newCoin.count == curCoin.count:
             return False

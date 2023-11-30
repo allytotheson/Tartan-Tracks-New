@@ -32,6 +32,7 @@ class Train(Obstacle):
         self.color = color
         self.location = (BOARD_WIDTH, TRACK_1_BOTTOM + self.trackDy - self.height)
         self.name = f"images/{self.color}Train.png"
+        self.count = 1
 
 class Fence(Obstacle):
     def __init__(self, track, fill):
@@ -41,6 +42,7 @@ class Fence(Obstacle):
         self.fill = fill
         self.location = (BOARD_WIDTH, TRACK_1_BOTTOM + self.trackDy - self.height)
         self.name = f"images/{self.fill}Fence.png"
+        self.count = 1
 
 def isLegalObstacle():
     #if all obstacles in current list can make it to the edge of the board and player has a track

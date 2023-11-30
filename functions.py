@@ -16,7 +16,7 @@ def start(app):
     app.bg = BACKGROUND
     app.coin = COIN
 
-    app.players = [Player("bluePlayer", 0, 5, 0), Player("redPlayer", 1, 20, 1)]
+    app.players = [Player("bluePlayer", 0, 5, 0), Player("redPlayer", 1, 5, 1)]
     app.player1 = app.players[0]
     app.player2 = app.players[1]
 
@@ -48,7 +48,7 @@ def removeOffScreen(spritesList):
 
     while i>=0:
         sprite = spritesList[i]
-        if sprite.location[0] + sprite.width <= 0:
+        if sprite.location[0] + sprite.width <= 0 or sprite.count <= 0:
             spritesList.pop(i)
         i-=1
     
