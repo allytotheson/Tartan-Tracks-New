@@ -16,7 +16,7 @@ def start(app):
     app.bg = BACKGROUND
     app.coin = COIN
 
-    app.players = [Player("bluePlayer", 0, 1, 0), Player("redPlayer", 1, 1, 1)]
+    app.players = [Player("bluePlayer", 0, 5, 0), Player("redPlayer", 1, 5, 1)]
     app.player1 = app.players[0]
     app.player2 = app.players[1]
 
@@ -31,7 +31,7 @@ def start(app):
     app.isPaused = False
     app.gameOver = False
     app.winner = None
-
+    app.stepCount = 0
 def removeNext(nextSpritesList, Player1SpritesList, Player2SpritesList):
     i = len(nextSpritesList)-1
 
@@ -62,7 +62,6 @@ def removeCollectedCoins(coin, player1CoinsList, player2CoinsList, nextCoins):
             x, y = tempCoin.location 
             tempCoin.location = (x-COIN_WIDTH, y)
             player1CoinsList[i] = tempCoin
-            break
     
     for i in range(len(player2CoinsList)):
         tempCoin = player2CoinsList[i]
@@ -71,7 +70,7 @@ def removeCollectedCoins(coin, player1CoinsList, player2CoinsList, nextCoins):
             x, y = tempCoin.location 
             tempCoin.location = (x-COIN_WIDTH, y)
             player2CoinsList[i] = tempCoin
-            break
+
     for i in range(len(nextCoins)):
         tempCoin = nextCoins[i]
         if tempCoin == coin:
@@ -79,7 +78,6 @@ def removeCollectedCoins(coin, player1CoinsList, player2CoinsList, nextCoins):
             x, y = tempCoin.location 
             tempCoin.location = (x-COIN_WIDTH, y)
             nextCoins[i] = tempCoin
-            break
     
     return player1CoinsList, player2CoinsList, nextCoins
     

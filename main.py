@@ -12,9 +12,6 @@ import Coin as CO
 
 def onAppStart(app):
     func.start(app)
-def game_redrawAll(app):
-    drawImage(CMUImage(app.bg), 0, 0)
-    drawImage(CMUImage(app.bg), 0, BACKGROUND_HEIGHT)
 
 def game_redrawAll(app):
     #draw backgrounds/screens
@@ -59,28 +56,44 @@ def game_redrawAll(app):
 
 def game_onStep(app):
     app.stepsPerSecond = 20
-
+    if app.stepCount < 30:
+        app.stepCount += 1
+    else:
+        app.stepCount = 0
+    
     if not app.gameOver and not app.isPaused:
         #keep nextObstacles & nextCoins lists updated
-        newObstacle = OBS.loadObstacle()
-        if True:#OBS.isLegalObstacle():
-            app.nextObstacles.append(newObstacle)
+        n = 4 - len(min(app.player1Obstacles, app.player2Obstacles)) #obstacles needed
+        #to be generated to keep obstacles list at 4
+        for i in range(n):
+            newObstacle = OBS.loadObstacle()
+            if True:#OBS.isLegalObstacle():
+                app.nextObstacles.append(newObstacle)
         
-        newCoinString = CO.loadCoin()
-        if True: #CO.isLegalCoin():
-            app.nextCoins.append(newCoinString)
+
+        n = 3 - len(min(app.player1Coins, app.player2Coins))
+        for i in range(n):
+            newCoinString = CO.loadCoin()
+            if True: #CO.isLegalCoin():
+                app.nextCoins.append(newCoinString)
 
         #add new obstacles and coins to players view
-        #obstacles
-        while len(app.player1Obstacles) < 3:
-            app.player1Obstacles.append(app.nextObstacles[0])
-        while len(app.player2Obstacles) < 3:
-            app.player2Obstacles.append(app.nextObstacles[0])   
-        #coins
-        while len(app.player1Coins) < 3:
-            app.player1Coins.append(app.nextCoins[0])
-        while len(app.player2Coins) < 3:
-            app.player2Coins.append(app.nextCoins[0])
+        #PLAYER 1
+        print(app.stepCount % (OBSTACLE_GENERATION_SPEED[app.player1.speed]))
+        if app.stepCount % OBSTACLE_GENERATION_SPEED[app.player1.speed] == 0 :
+            #obstacles
+            if len(app.player1Obstacles) < 3:
+                app.player1Obstacles.append(app.nextObstacles[0]) 
+            #coins
+            if len(app.player1Coins) < 3:
+                app.player1Coins.append(app.nextCoins[0])
+        #PLAYER 2
+        if app.stepCount % OBSTACLE_GENERATION_SPEED[app.player2.speed] == 0:
+            if len(app.player2Obstacles) < 3:
+                app.player2Obstacles.append(app.nextObstacles[0])  
+            if len(app.player2Coins) < 3:
+                app.player2Coins.append(app.nextCoins[0])
+
         #remove obstacles on nextObstacles and coins on nextCoins that have
         #appeared on both screens
         app.nextObstacles = func.removeNext(app.nextObstacles, app.player1Obstacles,

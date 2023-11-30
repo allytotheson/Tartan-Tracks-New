@@ -32,3 +32,5 @@ CUSTOMIZATION = {"Train" : ["red"], "Fence":["solid"]}
 
 ACCELERATION = 10
 GRAVITY = 0.5
+
+OBSTACLE_GENERATION_SPEED = {5:30, 10:25, 15:20, 20:15, 25:10}
