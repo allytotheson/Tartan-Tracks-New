@@ -62,8 +62,8 @@ class Player:
         
     def isCoinCollision(self, coinList):
         for coin in coinList:
-            if ((coin.location[0] - (self.location[0] + self.width)) <= -(self.width/2)
-                and coin.location[0] + coin.width >= self.location[0]
+            if ((coin.location[0] - (self.location[0] + self.width)) <= 0
+                and coin.location[0] + COIN_WIDTH >= self.location[0]
                 and coin.track == self.track):
 
                 self.addCoins()

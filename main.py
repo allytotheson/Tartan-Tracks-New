@@ -55,7 +55,7 @@ def game_redrawAll(app):
             drawImage(CMUImage(img), x, y)
 
 def game_onStep(app):
-    app.stepsPerSecond = 20
+    app.stepsPerSecond = 10
     if app.stepCount < 30:
         app.stepCount += 1
     else:
@@ -63,7 +63,7 @@ def game_onStep(app):
     
     if not app.gameOver and not app.isPaused:
         #keep nextObstacles & nextCoins lists updated
-        n = 4 - len(min(app.player1Obstacles, app.player2Obstacles)) #obstacles needed
+        n = 4 - min(len(app.player1Obstacles), len(app.player2Obstacles)) #obstacles needed
         #to be generated to keep obstacles list at 4
         for i in range(n):
             newObstacle = OBS.loadObstacle()
@@ -71,7 +71,7 @@ def game_onStep(app):
                 app.nextObstacles.append(newObstacle)
         
 
-        n = 3 - len(min(app.player1Coins, app.player2Coins))
+        n = 3 - min(len(app.player1Coins), len(app.player2Coins))
         for i in range(n):
             newCoinString = CO.loadCoin()
             if True: #CO.isLegalCoin():
@@ -79,7 +79,6 @@ def game_onStep(app):
 
         #add new obstacles and coins to players view
         #PLAYER 1
-        print(app.stepCount % (OBSTACLE_GENERATION_SPEED[app.player1.speed]))
         if app.stepCount % OBSTACLE_GENERATION_SPEED[app.player1.speed] == 0 :
             #obstacles
             if len(app.player1Obstacles) < 3:
@@ -116,7 +115,6 @@ def game_onStep(app):
         app.player1Coins = func.removeOffScreen(app.player1Coins)
         app.player2Coins = func.removeOffScreen(app.player2Coins)
 
-        print(app.player1Obstacles, app.player2Obstacles)
         #actions
         if app.player1.isJump:
             app.player1.jump()
@@ -132,10 +130,8 @@ def game_onStep(app):
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
             app.nextCoins = lists[2]
-
         #if player 2 collides with coin
         if app.player2.isCoinCollision(app.player2Coins)[0] == "True":
-
             coin = app.player2.isCoinCollision(app.player2Coins)[1]
             lists = func.removeCollectedCoins(coin, app.player1Coins,
                                               app.player2Coins,

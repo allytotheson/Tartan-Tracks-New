@@ -24,8 +24,13 @@ class Coin:
         x, y = self.location
         self.location = (x-speed, y)
 
-def isLegalCoin():
-    pass
+def isLegalCoin(newCoin, coinList):
+    for curCoin in coinList:
+        if newCoin.location[0] - curCoin.location[0] + curCoin.width <= 0:
+            return False
+        if newCoin.count == curCoin.count:
+            return False
+    return True
     #coin should not overlap 
     #coins should be different lengths
     #
