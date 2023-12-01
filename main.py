@@ -48,14 +48,9 @@ def game_redrawAll(app):
                 img = func.loadImage(sprite)
                 drawImage(CMUImage(img), x, y)
 
-    #draw players
-    
-    # for player in app.players:
-    #     for screen in range(2):
-    #         x, y = player.location[0], player.location[1] + screen*BACKGROUND_HEIGHT
-    #         img = func.loadImage(player)
-    #         drawImage(CMUImage(img), x, y)
+
     func.drawPlayers(app, app.player1, app.player2)
+    func.drawPlayers(app, app.staticPlayer2, app.staticPlayer1)
 
 def game_onStep(app):
     app.stepsPerSecond = 20
@@ -129,6 +124,9 @@ def game_onStep(app):
         #update player distance
         app.player1.distance += app.player1.speed
         app.player2.distance += app.player2.speed
+
+        func.maintainStaticPlayers(app, app.player1, app.player2,
+                                   app.staticPlayer1, app.staticPlayer2)
         #if players collide with each other
 
         #if game over

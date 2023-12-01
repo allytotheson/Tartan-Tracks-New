@@ -44,12 +44,25 @@ class Fence(Obstacle):
         self.location = (BOARD_WIDTH, TRACK_1_BOTTOM + self.trackDy - self.height)
         self.name = f"images/{self.fill}Fence.png"
         self.count = 1
-class Person(Obstacle):
-    def __init__(self, track, name):
+
+class StaticPerson(Obstacle):
+    def __init__(self, name, track, speed, screen):
         super().__init__(track)
         self.width = PERSON_WIDTH
         self.height = PERSON_HEIGHT
         self.name = f"images/{name}.png"
+        self.track = track
+        self.speed = speed
+        self.screen = screen
+        self.trackDy = TRACK_DIFFERENCE * self.track
+        self.location = (BOARD_WIDTH//6, TRACK_1_MIDDLE + self.trackDy - PERSON_HEIGHT)
+
+    def updateSelf(self, player, otherPlayer):
+        self.track = player.track
+        self.speed = player.speed-otherPlayer.speed
+        self.trackDy = TRACK_DIFFERENCE * self.track
+        x, y = self.location
+        self.location = (x, TRACK_1_MIDDLE + self.trackDy - PERSON_HEIGHT )
 
 def isLegalObstacle(newObstacle, allObstacles):
     for obstacle in allObstacles:

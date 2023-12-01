@@ -4,7 +4,7 @@ from constants import *
 import random 
 from copy import deepcopy
 
-from Obstacle import Obstacle, Train, Fence
+from Obstacle import Obstacle, Train, Fence, StaticPerson
 from Player import Player
 from Coin import Coin
 import Obstacle as OBS
@@ -17,13 +17,11 @@ def start(app):
     app.bg = BACKGROUND
     app.coin = COIN
 
-    app.players = [Player("bluePlayer", 0, 10.5, 0), Player("redPlayer", 1, 10, 1)]
+    app.players = [Player("bluePlayer", 0, 10.1, 0), Player("redPlayer", 1, 10, 1)]
     app.player1 = app.players[0]
     app.player2 = app.players[1]
-
-    app.nextObstacles = [Train(1, "red")]
-    app.nextCoins = [Coin(2, 6)]
-
+    app.staticPlayer1 = StaticPerson("bluePlayer", 0, 0, 0)
+    app.staticPlayer2 = StaticPerson("redPlayer", 1, 0, 1)
     app.player1Obstacles = []
     app.player1Coins = []
     app.player2Obstacles = []
@@ -33,16 +31,7 @@ def start(app):
     app.gameOver = False
     app.winner = None
     app.stepCount = 0
-def removeNext(nextSpritesList, Player1SpritesList, Player2SpritesList):
-    i = len(nextSpritesList)-1
 
-    while i >= 0:
-        sprite = nextSpritesList[i]
-        if sprite in Player1SpritesList and sprite in Player2SpritesList:
-            nextSpritesList.pop(i)
-        i-=1
-    
-    return nextSpritesList
 
 def removeOffScreen(spritesList):
     i = len(spritesList)-1
@@ -89,6 +78,9 @@ def loadImage(sprite):
     if isinstance(sprite, Fence):
         fence = Image.open(sprite.name)
         return fence
+    if isinstance(sprite, StaticPerson):
+        staticPerson = Image.open(sprite.name)
+        return staticPerson
     if isinstance(sprite, Coin):
         coin = app.coin
         return coin
@@ -131,4 +123,26 @@ def drawPlayers(app, player1, player2):
     x, y = player2.location[0], player2.location[1] + BACKGROUND_HEIGHT
     img = loadImage(player2)
     drawImage(CMUImage(img), x, y)
+
+def maintainStaticPlayers(app, player1, player2, player1Static, player2Static):
+    player1Static.updateSelf(player1, player2)
+    player2Static.updateSelf(player2, player1)
+
+    if player1.distance > player2.distance:
+        distanceDx = player1.distance - player2.distance
+        #what player 1 sees
+        x, y = player2Static.location
+        player2Static.location = (x-distanceDx, y)
+        #what player 2 sees
+        x, y = player1Static.location
+        player1Static.location = (x+distanceDx, y)
+    if player2.distance > player1.distance:
+        distanceDx = player2.distance - player1.distance
+        #what player 2 sees
+        x, y = player1Static.location
+        player1Static.location = (x-distanceDx, y)
+        #what player1 sees
+        x, y = player2Static.location
+        player2Static.location = (x+distanceDx, y)
+    
 
