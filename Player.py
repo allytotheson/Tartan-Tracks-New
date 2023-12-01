@@ -91,7 +91,8 @@ class Player:
     
     def isPersonCollision(self, staticPerson):
         if (self.track == staticPerson.track
-            and self.location[0] == staticPerson.location[0]):
+            and (staticPerson.location[0] - staticPerson.width <= self.location[0] 
+                 <= staticPerson.location[0] + staticPerson.width)):
             return True
         return False
     

@@ -127,12 +127,14 @@ def drawPlayers(app, player1, player2):
     img1 = loadImage(player2)
     #drawImage(CMUImage(img1), x1, y1)
 
+
     if player1.track < player2.track:
         drawImage(CMUImage(img), x, y)
         drawImage(CMUImage(img1), x1, y1)
     else:
         drawImage(CMUImage(img1), x1, y1)
         drawImage(CMUImage(img), x, y)
+
 
 def maintainStaticPlayers(app, player1, player2, player1Static, player2Static):
     player1Static.updateSelf(player1, player2)

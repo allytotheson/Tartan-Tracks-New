@@ -100,6 +100,9 @@ def game_onStep(app):
         app.player1Coins = func.removeOffScreen(app.player1Coins)
         app.player2Coins = func.removeOffScreen(app.player2Coins)
 
+
+        func.maintainStaticPlayers(app, app.player1, app.player2,
+                                   app.staticPlayer1, app.staticPlayer2)
         #actions
         if app.player1.isJump:
             app.player1.jump()
@@ -125,22 +128,20 @@ def game_onStep(app):
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
 
-        #if players collide with obstacle
-        if app.player1.isObstacleCollision(app.player1Obstacles):
-            app.crashLocation = app.player1.location
-            app.gameOver = True
-            app.winner = "Player 2"
-        if app.player2.isObstacleCollision(app.player2Obstacles):
-            app.crashLocation = app.player2.location
-            app.gameOver = True
-            app.winner = "Player 1"
+        # #if players collide with obstacle
+        # if app.player1.isObstacleCollision(app.player1Obstacles):
+        #     app.crashLocation = app.player1.location
+        #     app.gameOver = True
+        #     app.winner = "Player 2"
+        # if app.player2.isObstacleCollision(app.player2Obstacles):
+        #     app.crashLocation = app.player2.location
+        #     app.gameOver = True
+        #     app.winner = "Player 1"
         
         #update player distance
         app.player1.distance += app.player1.speed
         app.player2.distance += app.player2.speed
 
-        func.maintainStaticPlayers(app, app.player1, app.player2,
-                                   app.staticPlayer1, app.staticPlayer2)
         
         #if players collide with each other
         if app.player1.isSwitch:
