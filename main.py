@@ -98,6 +98,13 @@ def game_onStep(app):
             app.player1.jump()
         if app.player2.isJump:
             app.player2.jump()
+        if app.player1.isSwitch:
+            app.player1.switch()
+        if app.player2.isSwitch:
+            app.player2.switch()
+
+
+
         
         #if player 1 collides with coin
         if app.player1.isCoinCollision(app.player1Coins)[0] == "True": #(True, coin)
@@ -113,12 +120,13 @@ def game_onStep(app):
                                               app.player2Coins)
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
-        #if players collide with obstacle
+
+        if players collide with obstacle
         if app.player1.isObstacleCollision(app.player1Obstacles):
-            app.gameOver == True
+            app.gameOver = True
             app.winner = "Player 2"
         if app.player2.isObstacleCollision(app.player2Obstacles):
-            app.gameOver == True
+            app.gameOver = True
             app.winner = "Player 1"
         
         #update player distance
@@ -127,33 +135,82 @@ def game_onStep(app):
 
         func.maintainStaticPlayers(app, app.player1, app.player2,
                                    app.staticPlayer1, app.staticPlayer2)
+        
         #if players collide with each other
+        if app.player1.isSwitch:
+            if app.player1.isPersonCollision(app.staticPlayer2):
+                if app.player1.isLegalCollision(app.staticPlayer2, app.player1.direction):
+                    app.player2.switchLanes(app.player1.direction)
+                    app.player2.isSwitch = True
+                    app.player2.direction = app.player1.direction
 
+        if app.player2.isSwitch:
+            if app.player2.isPersonCollision(app.staticPlayer1):
+                if app.player2.isLegalCollision(app.staticPlayer1, app.player2.direction):
+                    app.player1.switchLanes(app.player2.direction)
+                    app.player1.isSwitch = True
+                    app.player1.direction = app.player2.direction
+        
         #if game over
+        if app.gameOver == True:
+            setActiveScreen("gameOver")
 def game_onKeyPress(app, key):
     if not app.gameOver and not app.isPaused:
         if key == "left" and not app.player1.isJump:
-            app.player1.switchLanes(-1)
+            if app.player1.switchLanes(-1):
+                app.player1.isSwitch = True
+                app.player1.direction = -1
+
         elif key == "right" and not app.player1.isJump:
-            app.player1.switchLanes(+1)
+            if app.player1.switchLanes(+1):
+                app.player1.isSwitch = True
+                app.player1.direction = +1
+
         elif key == "up":
             app.player1.isJump = True
         
+        elif key == "/":
+            if func.checkSpeed(app.player1, +0.5):
+                app.player1.speed += 0.5
+        elif key == ".":
+            if func.checkSpeed(app.player1, -0.5):
+                app.player1.speed -= 0.5
+        
         if key == "a" and not app.player2.isJump:
-            app.player2.switchLanes(-1)
+            if app.player2.switchLanes(-1):
+                app.player2.isSwitch = True
+                app.player2.direction = -1
         elif key == "d" and not app.player2.isJump:
-            app.player2.switchLanes(+1)
+            if app.player2.switchLanes(+1):
+                app.player2.isSwitch = True
+                app.player2.direction = +1
         elif key == "w":
             app.player2.isJump = True
+        elif key == "q":
+            if func.checkSpeed(app.player2, +0.5):
+                app.player2.speed += 0.5
+        elif key == "tab":
+            if func.checkSpeed(app.player2, -0.5):
+                app.player2.speed -= 0.5
+
 
     if not app.gameOver:
         if key == "p":
             app.isPaused = not app.isPaused
-        if key == "space":
-            print("player1 has traveled", app.player1.distance, "pixels")
-            print("player2 has traveled", app.player2.distance, "pixels")
-            print(app.player1Obstacles)
-            print(app.player1Coins)
+
+def gameOver_redrawAll(app):
+    drawRect(0,0, BOARD_WIDTH, BOARD_HEIGHT, fill = "white")
+    drawLabel("Game over!", BOARD_WIDTH/2, BOARD_HEIGHT/2, size = 32)
+    drawLabel(f"{app.winner} won!", BOARD_WIDTH/2, BOARD_HEIGHT/2 + 40, size = 16)
+    drawLabel(f"Player 1 Stats - Coins : {app.player1.coinCount}, Distance : {app.player1.distance}",
+              BOARD_WIDTH/2, BOARD_HEIGHT/2 + 60, size = 12)
+    drawLabel(f"Player 2 Stats - Coins : {app.player2.coinCount}, Distance : {app.player2.distance}",
+              BOARD_WIDTH/2, BOARD_HEIGHT/2 + 75, size = 12)
+    drawLabel("Press any key to restart :)", BOARD_WIDTH/2, BOARD_HEIGHT/2 + 90, size = 12)
+def gameOver_onKeyPress(app, key):
+    if key != None:
+        func.start(app)
+        setActiveScreen("game")
 
 
 def main():

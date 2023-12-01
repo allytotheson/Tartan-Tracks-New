@@ -17,11 +17,11 @@ def start(app):
     app.bg = BACKGROUND
     app.coin = COIN
 
-    app.players = [Player("bluePlayer", 0, 10.1, 0), Player("redPlayer", 1, 10, 1)]
+    app.players = [Player("bluePlayer", 0, 10, 0), Player("redPlayer", 1, 10, 1)]
     app.player1 = app.players[0]
     app.player2 = app.players[1]
-    app.staticPlayer1 = StaticPerson("bluePlayer", 0, 0, 0)
-    app.staticPlayer2 = StaticPerson("redPlayer", 1, 0, 1)
+    app.staticPlayer1 = StaticPerson("bluePlayer", 0, 10, 0)
+    app.staticPlayer2 = StaticPerson("redPlayer", 1, 10, 1)
     app.player1Obstacles = []
     app.player1Coins = []
     app.player2Obstacles = []
@@ -90,6 +90,8 @@ def loadImage(sprite):
 
 
 def addSpritesToList(player1, player2, player1List, player2List, newSprite):
+    if newSprite == None:
+        return player1List, player2List
     if player1.distance > player2.distance:
         player1List.append(deepcopy(newSprite)) #player 1
 
@@ -128,21 +130,25 @@ def maintainStaticPlayers(app, player1, player2, player1Static, player2Static):
     player1Static.updateSelf(player1, player2)
     player2Static.updateSelf(player2, player1)
 
-    if player1.distance > player2.distance:
-        distanceDx = player1.distance - player2.distance
-        #what player 1 sees
-        x, y = player2Static.location
-        player2Static.location = (x-distanceDx, y)
-        #what player 2 sees
-        x, y = player1Static.location
-        player1Static.location = (x+distanceDx, y)
-    if player2.distance > player1.distance:
-        distanceDx = player2.distance - player1.distance
-        #what player 2 sees
-        x, y = player1Static.location
-        player1Static.location = (x-distanceDx, y)
-        #what player1 sees
-        x, y = player2Static.location
-        player2Static.location = (x+distanceDx, y)
+    if player1.isJump:
+        player1Static.jump()
+    if player2.isJump:
+        player2Static.jump()
     
+    if player1.isSwitch:
+        player1Static.switch()
+    if player2.isSwitch:
+        player2Static.switch()
+    
+def checkSpeed(player, val):
+    if 7 < player.speed + val < 13:
+        return True
+    else:
+        return False
+
+
+        
+        
+            
+            
 
