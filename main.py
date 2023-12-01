@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 from constants import * 
 import random 
 from copy import deepcopy
+from time import sleep
 
 from Obstacle import Obstacle, Train, Fence
 from Player import Player
@@ -52,10 +53,16 @@ def game_redrawAll(app):
     func.drawPlayers(app, app.player1, app.player2)
     func.drawPlayers(app, app.staticPlayer2, app.staticPlayer1)
 
+    if app.crashLocation != None:
+        x, y = app.crashLocation
+        for i in range(2):
+            drawImage(CMUImage(CRASH), x, y +  BACKGROUND_HEIGHT*i)
+
 def game_onStep(app):
     app.stepsPerSecond = 20
-    app.stepCount += 1
-    
+    if app.gameOver:
+        app.gameOverStep += 1
+
     if not app.gameOver and not app.isPaused:
         #add new obstacles and coins to players view
         #PLAYER 1
@@ -102,9 +109,6 @@ def game_onStep(app):
             app.player1.switch()
         if app.player2.isSwitch:
             app.player2.switch()
-
-
-
         
         #if player 1 collides with coin
         if app.player1.isCoinCollision(app.player1Coins)[0] == "True": #(True, coin)
@@ -121,11 +125,13 @@ def game_onStep(app):
             app.player1Coins = lists[0]
             app.player2Coins = lists[1]
 
-        if players collide with obstacle
+        #if players collide with obstacle
         if app.player1.isObstacleCollision(app.player1Obstacles):
+            app.crashLocation = app.player1.location
             app.gameOver = True
             app.winner = "Player 2"
         if app.player2.isObstacleCollision(app.player2Obstacles):
+            app.crashLocation = app.player2.location
             app.gameOver = True
             app.winner = "Player 1"
         
@@ -151,9 +157,10 @@ def game_onStep(app):
                     app.player1.isSwitch = True
                     app.player1.direction = app.player2.direction
         
-        #if game over
-        if app.gameOver == True:
-            setActiveScreen("gameOver")
+    #if game over
+    if app.gameOverStep >=15:
+        setActiveScreen("gameOver")
+
 def game_onKeyPress(app, key):
     if not app.gameOver and not app.isPaused:
         if key == "left" and not app.player1.isJump:

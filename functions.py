@@ -30,7 +30,8 @@ def start(app):
     app.isPaused = False
     app.gameOver = False
     app.winner = None
-    app.stepCount = 0
+    app.gameOverStep = 0
+    app.crashLocation = None
 
 
 def removeOffScreen(spritesList):
@@ -121,10 +122,17 @@ def addSpritesToList(player1, player2, player1List, player2List, newSprite):
 def drawPlayers(app, player1, player2):
     x, y = player1.location
     img = loadImage(player1)
-    drawImage(CMUImage(img), x, y)
-    x, y = player2.location[0], player2.location[1] + BACKGROUND_HEIGHT
-    img = loadImage(player2)
-    drawImage(CMUImage(img), x, y)
+    #drawImage(CMUImage(img), x, y)
+    x1, y1 = player2.location[0], player2.location[1] + BACKGROUND_HEIGHT
+    img1 = loadImage(player2)
+    #drawImage(CMUImage(img1), x1, y1)
+
+    if player1.track < player2.track:
+        drawImage(CMUImage(img), x, y)
+        drawImage(CMUImage(img1), x1, y1)
+    else:
+        drawImage(CMUImage(img1), x1, y1)
+        drawImage(CMUImage(img), x, y)
 
 def maintainStaticPlayers(app, player1, player2, player1Static, player2Static):
     player1Static.updateSelf(player1, player2)

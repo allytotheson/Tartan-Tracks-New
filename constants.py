@@ -15,6 +15,7 @@ FENCE_HEIGHT = FENCE.size[1]
 PERSON = Image.open("images/bluePlayer.png")
 PERSON_WIDTH = PERSON.size[0]
 PERSON_HEIGHT = PERSON.size[1]
+CRASH = Image.open("images/crash.png")
 
 BOARD_WIDTH = BACKGROUND_WIDTH #640
 BOARD_HEIGHT = BACKGROUND_HEIGHT * 2 #720
