@@ -20,43 +20,46 @@ def game_redrawAll(app):
     drawImage(CMUImage(app.bg), 0, 0)
     drawImage(CMUImage(app.bg), 0, BACKGROUND_HEIGHT)
 
-
-    #PLAYER 1 SCREEN
-    for lst in func.drawSpritesInOrder(app.player1Obstacles + 
-                                       app.player1Coins):
-        for sprite in lst:
-            if isinstance(sprite, Coin):
-                for i in range(sprite.count):
-                    x, y = sprite.location[0] + i*COIN_WIDTH, sprite.location[1]
+    if app.helpShown == True:
+        drawImage(CMUImage(HELP), BOARD_WIDTH/2, BOARD_HEIGHT/2, align = "center")
+        drawLabel("Press h again to return to game", BOARD_WIDTH/2, 680, size = 16, bold = True)
+    if not app.helpShown:
+        #PLAYER 1 SCREEN
+        for lst in func.drawSpritesInOrder(app.player1Obstacles + 
+                                        app.player1Coins):
+            for sprite in lst:
+                if isinstance(sprite, Coin):
+                    for i in range(sprite.count):
+                        x, y = sprite.location[0] + i*COIN_WIDTH, sprite.location[1]
+                        img = func.loadImage(sprite)
+                        drawImage(CMUImage(img), x, y)
+                else:      
+                    x, y = sprite.location
                     img = func.loadImage(sprite)
                     drawImage(CMUImage(img), x, y)
-            else:      
-                x, y = sprite.location
-                img = func.loadImage(sprite)
-                drawImage(CMUImage(img), x, y)
-    
-    #PLAYER 2 SCREEN
-    for lst in func.drawSpritesInOrder(app.player2Obstacles + 
-                                       app.player2Coins):
-        for sprite in lst:
-            if isinstance(sprite, Coin):
-                for i in range(sprite.count):
-                    x, y = sprite.location[0] + i*COIN_WIDTH, sprite.location[1] + BACKGROUND_HEIGHT
+        
+        #PLAYER 2 SCREEN
+        for lst in func.drawSpritesInOrder(app.player2Obstacles + 
+                                        app.player2Coins):
+            for sprite in lst:
+                if isinstance(sprite, Coin):
+                    for i in range(sprite.count):
+                        x, y = sprite.location[0] + i*COIN_WIDTH, sprite.location[1] + BACKGROUND_HEIGHT
+                        img = func.loadImage(sprite)
+                        drawImage(CMUImage(img), x, y)
+                else:      
+                    x, y = sprite.location[0], sprite.location[1] + BACKGROUND_HEIGHT
                     img = func.loadImage(sprite)
                     drawImage(CMUImage(img), x, y)
-            else:      
-                x, y = sprite.location[0], sprite.location[1] + BACKGROUND_HEIGHT
-                img = func.loadImage(sprite)
-                drawImage(CMUImage(img), x, y)
 
 
-    func.drawPlayers(app, app.player1, app.player2)
-    func.drawPlayers(app, app.staticPlayer2, app.staticPlayer1)
+        func.drawPlayers(app, app.player1, app.player2)
+        func.drawPlayers(app, app.staticPlayer2, app.staticPlayer1)
 
-    if app.crashLocation != None:
-        x, y = app.crashLocation
-        for i in range(2):
-            drawImage(CMUImage(CRASH), x, y +  BACKGROUND_HEIGHT*i)
+        if app.crashLocation != None:
+            x, y = app.crashLocation
+            for i in range(2):
+                drawImage(CMUImage(CRASH), x, y +  BACKGROUND_HEIGHT*i)
 
 def game_onStep(app):
     app.stepsPerSecond = 20
@@ -201,20 +204,21 @@ def game_onKeyPress(app, key):
             if func.checkSpeed(app.player2, -0.5):
                 app.player2.speed -= 0.5
 
+    if key == "h":
+        if app.isPaused:
+            app.helpShown = not app.helpShown
+        else:
+            app.helpShown = not app.helpShown
+            app.isPaused = not app.isPaused
+
 
     if not app.gameOver:
         if key == "p":
             app.isPaused = not app.isPaused
 
 def gameOver_redrawAll(app):
-    drawRect(0,0, BOARD_WIDTH, BOARD_HEIGHT, fill = "white")
-    drawLabel("Game over!", BOARD_WIDTH/2, BOARD_HEIGHT/2, size = 32)
-    drawLabel(f"{app.winner} won!", BOARD_WIDTH/2, BOARD_HEIGHT/2 + 40, size = 16)
-    drawLabel(f"Player 1 Stats - Coins : {app.player1.coinCount}, Distance : {app.player1.distance}",
-              BOARD_WIDTH/2, BOARD_HEIGHT/2 + 60, size = 12)
-    drawLabel(f"Player 2 Stats - Coins : {app.player2.coinCount}, Distance : {app.player2.distance}",
-              BOARD_WIDTH/2, BOARD_HEIGHT/2 + 75, size = 12)
-    drawLabel("Press any key to restart :)", BOARD_WIDTH/2, BOARD_HEIGHT/2 + 90, size = 12)
+    func.gameOverDrawing(app)
+
 def gameOver_onKeyPress(app, key):
     if key != None:
         func.start(app)

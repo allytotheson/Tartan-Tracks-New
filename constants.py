@@ -17,6 +17,12 @@ PERSON_WIDTH = PERSON.size[0]
 PERSON_HEIGHT = PERSON.size[1]
 CRASH = Image.open("images/crash.png")
 
+HELP = Image.open("images/help.png")
+GAME_OVER = Image.open("images/gameOver.png")
+BLUE_PLAYER = Image.open("images/bluePlayer.png")
+RED_PLAYER = Image.open("images/redPlayer.png")
+BLUE_PLAYER = BLUE_PLAYER.resize((90, 150))
+RED_PLAYER = RED_PLAYER.resize((90, 150))
 BOARD_WIDTH = BACKGROUND_WIDTH #640
 BOARD_HEIGHT = BACKGROUND_HEIGHT * 2 #720
 

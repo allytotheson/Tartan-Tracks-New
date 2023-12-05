@@ -32,6 +32,7 @@ def start(app):
     app.winner = None
     app.gameOverStep = 0
     app.crashLocation = None
+    app.helpShown = False
 
 
 def removeOffScreen(spritesList):
@@ -161,4 +162,17 @@ def checkSpeed(player, val):
         
             
             
-
+def gameOverDrawing(app):
+    drawImage(CMUImage(app.bg), 0,0)
+    drawImage(CMUImage(app.bg), 0, BACKGROUND_HEIGHT)
+    drawImage(CMUImage(GAME_OVER), BOARD_WIDTH/2, BOARD_HEIGHT/2, align = "center")
+    if app.winner == "Player 1":
+        drawImage(CMUImage(BLUE_PLAYER), 120, 330)
+    else:
+        drawImage(CMUImage(RED_PLAYER), 120, 330)
+    drawLabel(f"{app.winner} won!", BOARD_WIDTH/2, BOARD_HEIGHT/2 + 40, size = 16)
+    drawLabel(f"Player 1 Stats - Coins : {app.player1.coinCount}, Distance : {app.player1.distance}",
+              BOARD_WIDTH/2, BOARD_HEIGHT/2 + 60, size = 12)
+    drawLabel(f"Player 2 Stats - Coins : {app.player2.coinCount}, Distance : {app.player2.distance}",
+              BOARD_WIDTH/2, BOARD_HEIGHT/2 + 75, size = 12)
+    drawLabel("Press any key to restart :)", BOARD_WIDTH/2, BOARD_HEIGHT/2 + 90, size = 12)
