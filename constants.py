@@ -9,7 +9,7 @@ COIN_HEIGHT = COIN.size[1]
 TRAIN = Image.open("images/redTrain.png")
 TRAIN_WIDTH = TRAIN.size[0]
 TRAIN_HEIGHT = TRAIN.size[1]
-FENCE = Image.open("images/solidFence.png")
+FENCE = Image.open("images/redFence.png")
 FENCE_WIDTH = FENCE.size[0]
 FENCE_HEIGHT = FENCE.size[1]
 PERSON = Image.open("images/bluePlayer.png")
@@ -29,7 +29,7 @@ TRACK_DIFFERENCE = 87.5
 
 
 OBSTACLES = ["Train", "Fence"]
-CUSTOMIZATION = {"Train" : ["red"], "Fence":["solid"]}
+CUSTOMIZATION = {"Train" : ["red", "blue", "green"], "Fence":["red", "blue", "green"]}
 
 ACCELERATION = 10
 GRAVITY = 0.5
