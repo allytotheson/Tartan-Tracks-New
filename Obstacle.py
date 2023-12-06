@@ -96,19 +96,7 @@ class StaticPerson(Obstacle):
 
 def loadObstacle(allObstacles):
     return helperLoadObstacle(allObstacles, 0)
-    # randomType = choice(OBSTACLES)
-    # randomTrack = randrange(0,3)
-    # randomCustomization = choice(CUSTOMIZATION[randomType])
 
-    # if randomType == "Train":
-    #     newObstacle = Train(randomTrack, randomCustomization)
-    # elif randomType == "Fence":
-    #     newObstacle = Fence(randomTrack, randomCustomization)
-        
-    # if isLegalObstacle(newObstacle, allObstacles):
-    #     return newObstacle
-    # else:
-    #     return loadObstacle(allObstacles)
 
 def helperLoadObstacle(allObstacles, count):
     if count > 4:
@@ -121,6 +109,7 @@ def helperLoadObstacle(allObstacles, count):
             newObstacle = Train(randomTrack, randomCustomization)
         elif randomType == "Fence":
             newObstacle = Fence(randomTrack, randomCustomization)
+            
         if isLegalObstacle(newObstacle, allObstacles):
             return newObstacle
         else:

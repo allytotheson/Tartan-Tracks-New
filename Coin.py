@@ -38,9 +38,7 @@ def isLegalCoin(newCoin, coinList):
         if newCoin.count == curCoin.count:
             return False
     return True
-    #coin should not overlap 
-    #coins should be different lengths
-    #
+
 
 def loadCoin(coinList):
     randomTrack = random.randrange(0,3)
